@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserMapper">
+    <insert id="insert">
+        insert into user_info (user_name,user_password) values (#{name}, #{password})
+    </insert>
+
+    <!--更新用户主表的信息 -->
+    <update id="updateUserInfo" parameterType="com.example.demo.entity.User">
+        update user_info set 
+        user_name = #{name},
+        user_password = #{password},
+        user_level = #{level},
+        user_score = #{score},
+        user_exp = #{exp},
+        user_intro = #{intro},
+        user_nationality = #{nationality},
+        user_headshot = #{headPath}
+        where id = #{id}
+    </update>
+    <update id="updateStuInfo">
+        update student_info set
+                                stu_number = #{number},
+                                stu_name = #{name},
+                                stu_major_name = #{majorName},
+                                stu_specialty = #{specialty},
+                                stu_hobby = #{hobby}
+        where id = #{id}
+    </update>
+
+    <update id="updateTchInfo">
+        update teacher_info set
+                                teacher_number = #{number},
+                                teacher_name = #{name},
+                                teacher_guidance = #{guidance},
+                                teacher_specialty = #{specialty},
+                                teacher_hobby = #{hobby}
+        where id = #{id}
+    </update>
+
+    <update id="updateCmpInfo">
+        update company_info set
+                                company_number = #{number},
+                                company_name = #{name},
+                                company_business = #{business},
+                                company_linkman = #{linkman},
+                                company_profile = #{profile}
+        where id = #{id}
+    </update>
+
+    <update id="updateOtherInfo">
+        update other_info set
+                                other_number = #{number},
+                                other_name = #{name},
+                                other_profile = #{profile},
+                                other_specialty = #{specialty},
+                                other_hobby = #{hobby}
+        where id = #{id}
+    </update>
+
+    <insert id="insertToStudent">
+        insert into student_info (user_id,stu_number,stu_name,stu_major_name,stu_specialty,stu_hobby)
+        values (#{id}, #{number}, #{name}, #{majorName}, #{specialty}, #{hobby})
+    </insert>
+    <insert id="insertToIdentity">
+        insert into user_identity (user_id,user_type)
+        values (#{id}, #{userType})
+    </insert>
+    <insert id="insertToTeacher">
+        insert into teacher_info (user_id,teacher_number,teacher_name,teacher_guidance,teacher_specialty,teacher_hobby)
+        values (#{id}, #{number}, #{name}, #{guidance}, #{specialty}, #{hobby})
+    </insert>
+    <insert id="insertToCompany">
+        insert into company_info (user_id,company_id,company_name,company_business,company_linkman,company_profile)
+        values (#{id}, #{number}, #{name}, #{business}, #{linkman}, #{profile})
+    </insert>
+    <insert id="insertToOther">
+        insert into other_info (user_id,other_id,other_name,other_profile,other_specialty,other_hobby)
+        values (#{id}, #{number}, #{name}, #{profile}, #{specialty}, #{hobby})
+    </insert>
+    <select id="findAll" resultType="com.example.demo.entity.User" resultMap="UserResultMap">
+        select * from user_info
+    </select>
+    <select id="login" resultType="com.example.demo.entity.User" resultMap="UserResultMap">
+        select * from user_info where user_name = #{name} and user_password = #{password}
+    </select>
+  
+    <!-- 根据 id 在 user_info 表中查询用户所有信息 -->
+    <select id="selectById" resultType="com.example.demo.entity.User" resultMap="UserResultMap">
+        select id,user_name,user_password,user_level,user_score,user_exp,user_intro,user_nationality,user_headshot  
+        from user_info where id = #{id}
+    </select>
+    <select id="selectByName" resultType="com.example.demo.entity.User" resultMap="UserResultMap">
+        select * from user_info where user_name = #{name}
+    </select>
+    <select id="getUserInfo" resultType="com.example.demo.entity.User" resultMap="UserResultMap">
+        select * from user_info where user_name = #{name}
+    </select>
+
+    <!-- 根据学号查询学生信息 -->
+    <select id="selectStuInfoByNumber" resultType="com.example.demo.entity.User" resultMap="stuUser">
+        SELECT id, user_name, user_password, user_level, user_score, user_exp, user_intro, 
+	           user_nationality, user_headshot,user_id, stu_name, stu_number, stu_major_name, 
+               stu_specialty, stu_hobby
+        FROM user_info u, student_info s
+        WHERE u.id = s.user_id
+        AND s.stu_number = #{number}
+    </select>
+
+    <!-- 根据工号查询教师信息 -->
+    <select id="selectTchInfoByNumber" resultType="com.example.demo.entity.User" resultMap="tchUser">
+        SELECT id, user_name, user_password, user_level, user_score, user_exp, user_intro, 
+	           user_nationality, user_headshot,user_id, teacher_name, teacher_number, 
+               teacher_guidance, teacher_specialty, teacher_hobby
+        FROM user_info u, teacher_info t
+        WHERE u.id = t.user_id
+        AND t.teacher_number = #{number}
+    </select>
+
+    <!-- 根据编号查询企业信息 -->
+    <select id="selectCmpInfoByNumber" resultType="com.example.demo.entity.User" resultMap="cmpUser">
+        SELECT id, user_name, user_password, user_level, user_score, user_exp, user_intro, 
+	           user_nationality, user_headshot,user_id, company_name, company_id, 
+               company_business, company_linkman, company_profile
+        FROM user_info u, company_info c
+        WHERE u.id = c.user_id
+        AND c.company_id = #{number}
+    </select>
+
+    <!-- 根据编号查询其它用户信息 -->
+    <select id="selectOtherInfoByNumber" resultType="com.example.demo.entity.User" resultMap="otherUser">
+        SELECT id, user_name, user_password, user_level, user_score, user_exp, user_intro, 
+	           user_nationality, user_headshot,user_id, other_name, other_id, 
+               other_profile, other_specialty, other_hobby
+        FROM user_info u, other_info o
+        WHERE u.id = o.user_id
+        AND o.other_id = #{number}
+    </select>
+
+    <resultMap type="com.example.demo.entity.User" id="UserResultMap">
+        <!-- 定义主键 ,非常重要。如果是多个字段,则定义多个id -->
+        <!-- property：主键在pojo中的属性名 -->
+        <!-- column：主键在数据库中的列名 -->
+        <id property="id" column="id" />
+        <!-- 定义普通属性 -->
+        <result property="name" column="user_name" />
+        <result property="password" column="user_password" />
+        <result property="level" column="user_level" />
+        <result property="score" column="user_score" />
+        <result property="exp" column="user_exp" />
+        <result property="intro" column="user_intro" />
+        <result property="nationality" column="user_nationality" />
+        <result property="headPath" column="user_headshot" />
+    </resultMap>
+
+    <!-- 学生用户所有信息 -->
+    <resultMap id="stuUser" type="com.example.demo.entity.User" extends="UserResultMap">
+        <association property="stu" javaType="com.example.demo.entity.UserStu">
+            <result property="id" column="user_id"/>
+            <result property="number" column="stu_number"/>
+            <result property="name" column="stu_name"/>
+            <result property="majorName" column="stu_major_name"/>
+            <result property="specialty" column="stu_specialty"/>
+            <result property="hobby" column="stu_hobby"/>
+        </association>
+    </resultMap>
+
+    <!-- 教师用户所有信息 -->
+    <resultMap id="tchUser" type="com.example.demo.entity.User" extends="UserResultMap">
+        <association property="tch" javaType="com.example.demo.entity.UserTch">
+            <result property="id" column="user_id"/>
+            <result property="number" column="teacher_number"/>
+            <result property="name" column="teacher_name"/>
+            <result property="guidance" column="teacher_guidance"/>
+            <result property="specialty" column="teacher_specialty"/>
+            <result property="hobby" column="teacher_hobby"/>
+        </association>
+    </resultMap>
+
+    <!-- 企业用户所有信息 -->
+    <resultMap id="cmpUser" type="com.example.demo.entity.User" extends="UserResultMap">
+        <association property="tch" javaType="com.example.demo.entity.UserCmp">
+            <result property="id" column="user_id"/>
+            <result property="number" column="company_id"/>
+            <result property="name" column="company_name"/>
+            <result property="business" column="company_business"/>
+            <result property="linkman" column="company_linkman"/>
+            <result property="profile" column="company_profile"/>
+        </association>
+    </resultMap>
+    
+    <!-- 其它用户所有信息 -->
+    <resultMap id="otherUser" type="com.example.demo.entity.User" extends="UserResultMap">
+        <association property="other" javaType="com.example.demo.entity.UserOther">
+            <result property="id" column="user_id"/>
+            <result property="number" column="other_id"/>
+            <result property="name" column="other_name"/>
+            <result property="profile" column="other_profile"/>
+            <result property="specialty" column="other_specialty"/>
+            <result property="hobby" column="other_hobby"/>
+        </association>
+    </resultMap>
+</mapper>
